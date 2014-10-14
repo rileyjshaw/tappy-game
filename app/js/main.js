@@ -63,7 +63,7 @@ function ripple (e, keyboard) {
   }
   circle.radius = 0;
   if (batch.push(circle) === 1) requestAnimationFrame(tick);
-};
+}
 
 canvas.addEventListener('mousedown', handleMousedown, false);
 document.addEventListener('keydown', handleKeydown, false);

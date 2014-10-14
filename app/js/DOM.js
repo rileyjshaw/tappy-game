@@ -1,4 +1,5 @@
 module.exports = {
-  overlay: document.querySelector('.overlay'),
-  songTitle: document.getElementById('instructions')
+  overlay: document.getElementById('overlay'),
+  dots: document.querySelector('.dots'),
+  songTitle: document.querySelector('.instructions')
 };
