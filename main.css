@@ -1,22 +1,26 @@
+html, body, .vcent {
+  height: 100%; }
+
 body {
   margin: 0;
   font-family: Roboto, sans-serif;
-  color: white;
+  text-align: center;
+  color: #fff;
   background: #00baff;
   overflow: hidden; }
 
-canvas, #instructions {
-  position: absolute; }
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0; }
 
-#instructions {
+.vcent, #overlay {
+  display: inline-block;
+  vertical-align: middle; }
+
+#overlay {
+  position: relative;
   z-index: 1;
-  top: 50%;
-  left: 0;
-  right: 0;
-  line-height: 1em;
-  margin-top: -0.5em;
-  font-size: 30px;
-  text-align: center;
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -25,5 +29,25 @@ canvas, #instructions {
           user-select: none;
   -webkit-transition: opacity 0.2s ease-in-out;
           transition: opacity 0.2s ease-in-out; }
-  #instructions.hidden {
+  #overlay.hidden {
     opacity: 0; }
+
+.instructions {
+  font-size: 30px; }
+
+.dots {
+  list-style: none;
+  padding: 0; }
+  .dots li {
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    margin: 0 8px;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+    border: 1px white dashed;
+    border-radius: 12px;
+    -webkit-transition: background 0.2s ease-in-out;
+            transition: background 0.2s ease-in-out; }
+    .dots li.marked {
+      background: #fff; }
