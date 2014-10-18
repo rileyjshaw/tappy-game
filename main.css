@@ -6,7 +6,6 @@ body {
   font-family: Roboto, sans-serif;
   text-align: center;
   color: #fff;
-  background: #00baff;
   overflow: hidden; }
 
 canvas {
@@ -21,6 +20,8 @@ canvas {
 #overlay {
   position: relative;
   z-index: 1;
+  width: 600px;
+  max-width: 100%;
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -38,7 +39,7 @@ canvas {
 .dots {
   list-style: none;
   padding: 0; }
-  .dots li {
+  .dots li, .dots span {
     display: inline-block;
     height: 24px;
     width: 24px;
@@ -49,5 +50,5 @@ canvas {
     border-radius: 12px;
     -webkit-transition: background 0.2s ease-in-out;
             transition: background 0.2s ease-in-out; }
-    .dots li.marked {
+    .dots li.marked, .dots span.marked {
       background: #fff; }

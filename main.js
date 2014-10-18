@@ -1,88 +1,57 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var timer = require('./game.js');
 var DOM = require('./DOM.js');
+var ripple = require('./ripple.js');
+var timer = require('./game.js');
 
-var windowHeight = window.innerHeight;
-var windowWidth = window.innerWidth;
-var canvas = require('./newHDCanvas.js')(windowWidth, windowHeight, DOM.overlay);
-
-var maxRadius = Math.max(windowWidth, windowHeight);
-var rippleSpeed = maxRadius / 40;
-var ctx = canvas.getContext('2d');
 var spacePressed = false;
 
-var batch = [];
-
-function tick () {
-  // increment radius step:
-  batch.forEach(function (circle) { circle.radius += rippleSpeed; });
-
-  // drawing step:
-  ctx.fillStyle = '#00baff';
-  ctx.fillRect(0, 0, windowWidth, windowHeight);
-
-  batch.forEach(function (circle) {
-    ctx.fillStyle = 'rgba(255,255,255,' + (1 - circle.radius / maxRadius) * 0.8 + ')';
-    ctx.beginPath();
-    ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.fill();
-  });
-
-  // remove finished animations step:
-  batch = batch.filter(function (circle) {
-    return circle.radius < maxRadius;
-  });
-
-  if (batch.length) {
-    requestAnimationFrame(tick);
-  }
-}
-
 function handleMousedown (e) {
+  e = e || window.event;
+  var coords = DOM.canvas.getCoords(e);
   timer();
-  ripple(e);
+  ripple(coords.x, coords.y);
 }
 
 function handleKeydown (e) {
+  e = e || window.event;
   if (!spacePressed && e.keyCode === 32) {
     timer();
-    ripple({
-      x: windowWidth / 2,
-      y: windowHeight / 2
-    }, true);
+    ripple(DOM.windowWidth / 2, DOM.windowHeight / 2);
     spacePressed = true;
   }
 }
 
-function ripple (e, keyboard) {
-  var circle;
-  if (keyboard) circle = e;
-  else {
-    e = e || window.event;
-    circle = canvas.getCoords(e);
-  }
-  circle.radius = 0;
-  if (batch.push(circle) === 1) requestAnimationFrame(tick);
-}
-
-canvas.addEventListener('mousedown', handleMousedown, false);
-document.addEventListener('keydown', handleKeydown, false);
-document.addEventListener('keyup', function (e) {
+function handleKeyup (e) {
   e = e || window.event;
   if (e.keyCode === 32) spacePressed = false;
-}, false);
+}
 
-},{"./DOM.js":2,"./game.js":3,"./newHDCanvas.js":5}],2:[function(require,module,exports){
+DOM.canvas.addEventListener('mousedown', handleMousedown, false);
+document.addEventListener('keydown', handleKeydown, false);
+document.addEventListener('keyup', handleKeyup, false);
+
+},{"./DOM.js":2,"./game.js":3,"./ripple.js":7}],2:[function(require,module,exports){
+var windowHeight = window.innerHeight;
+var windowWidth = window.innerWidth;
+var overlay = document.getElementById('overlay');
+var canvas = require('./newHDCanvas.js')(windowWidth, windowHeight, overlay);
+var ctx = canvas.getContext('2d');
+
 module.exports = {
-  overlay: document.getElementById('overlay'),
-  dots: document.querySelector('.dots'),
-  songTitle: document.querySelector('.instructions')
+  canvas: canvas,
+  ctx: ctx,
+  dots: document.querySelector('ul.dots'),
+  overlay: overlay,
+  songTitle: document.querySelector('.instructions'),
+  windowHeight: windowHeight,
+  windowWidth: windowWidth
 };
 
-},{}],3:[function(require,module,exports){
-var levels = shuffle(require('./levels.js'));
+},{"./newHDCanvas.js":5}],3:[function(require,module,exports){
 var DOM = require('./DOM.js');
+var levels = shuffle(require('./levels.js'));
+var randColor = require('./randColor.js');
+var ripple = require('./ripple.js');
 
 var last, next, checkTimer, clicks, answer, answerLength;
 
@@ -129,6 +98,7 @@ function gameOver () {
 function nextLevel () {
   var level = levels.pop();
   if (level) {
+    ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
     DOM.overlay.className = 'hidden';
     answer = parseSong(level.song);
     answerLength = answer.length;
@@ -166,7 +136,7 @@ function check () {
     return acc + Math.abs(obs - exp) / exp;
   }, 0) / answerLength;
 
-  if (error < 0.1) nextLevel();
+  if (error < 0.16) nextLevel('Let\'s get started!');
   reset();
 }
 
@@ -178,23 +148,25 @@ function reset () {
 }
 
 function clickHandler () {
-  var currentLength = 0;
-  last = next;
-  next = new Date().getTime();
+  if (answerLength) {
+    var currentLength = 0;
+    last = next;
+    next = new Date().getTime();
 
-  if (last) currentLength = clicks.push(next - last);
+    if (last) currentLength = clicks.push(next - last);
 
-  DOM.dots.children[currentLength].className = 'marked';
+    DOM.dots.children[currentLength].className = 'marked';
 
-  if (currentLength === answerLength) check();
+    if (currentLength === answerLength) check();
+  } else nextLevel();
 }
 
 reset();
-nextLevel();
+ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
 
 module.exports = clickHandler;
 
-},{"./DOM.js":2,"./levels.js":4}],4:[function(require,module,exports){
+},{"./DOM.js":2,"./levels.js":4,"./randColor.js":6,"./ripple.js":7}],4:[function(require,module,exports){
 module.exports = [
   {
     title: 'Shave and a haircut, two bits!',
@@ -209,7 +181,7 @@ module.exports = [
     title: '(Intro for kung-fu Fighting)',
     song: '-----_-_-_-_-'
   }, {
-    title: 'Happy birthday',
+    title: 'Happy birthday to you',
     song: '-_--__-__-__-'
   }, {
     title: '...L, M, N, O, P! Q, R, S...',
@@ -232,6 +204,9 @@ module.exports = [
   }, {
     title: 'YYZ',
     song: '-_--_-_-_--_-_-_-_--'
+  }, {
+    title: 'Rudolph the red-nosed reindeer',
+    song: '--_--_-_-_-'
   }
 ];
 
@@ -295,4 +270,70 @@ module.exports = function (width, height, insertAfter) {
   return canvas;
 };
 
-},{}]},{},[1]);
+},{}],6:[function(require,module,exports){
+var currentIndex = 0;
+var colors = [
+  '#9c27b0',
+  '#03a9f4',
+  '#ff9800',
+  '#ff5177'
+];
+var length = colors.length;
+
+module.exports = function () {
+  var index;
+  do index = Math.floor(Math.random() * length);
+  while (index === currentIndex);
+  currentIndex = index;
+
+  return colors[index];
+};
+
+},{}],7:[function(require,module,exports){
+var DOM = require('./DOM.js');
+
+var maxRadius = Math.max(DOM.windowWidth, DOM.windowHeight);
+var rippleSpeed = maxRadius / 40;
+var batch = [];
+
+function ripple (x, y, color) {
+  var circle = {
+    x: x,
+    y: y,
+    color: color,
+    radius: 0
+  };
+
+  if (batch.push(circle) === 1) requestAnimationFrame(tick);
+}
+
+function tick () {
+  // increment radius step:
+  batch.forEach(function (circle) { circle.radius += rippleSpeed; });
+
+  // drawing step:
+  DOM.ctx.clearRect(0, 0, DOM.windowWidth, DOM.windowHeight);
+
+  batch.forEach(function (circle) {
+    DOM.ctx.fillStyle = circle.color || 'rgba(255,255,255,' + (1 - circle.radius / maxRadius) * 0.3 + ')';
+    DOM.ctx.beginPath();
+    DOM.ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+    DOM.ctx.closePath();
+    DOM.ctx.fill();
+  });
+
+  // remove finished animations step:
+  batch = batch.filter(function (circle) {
+    if (circle.radius < maxRadius) return true;
+    if (circle.color) DOM.canvas.style.backgroundColor = circle.color;
+    return false;
+  });
+
+  if (batch.length) {
+    requestAnimationFrame(tick);
+  }
+}
+
+module.exports = ripple;
+
+},{"./DOM.js":2}]},{},[1]);
