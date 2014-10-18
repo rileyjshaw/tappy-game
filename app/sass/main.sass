@@ -6,7 +6,6 @@ body
   font-family: Roboto, sans-serif
   text-align: center
   color: #fff
-  background: #00baff
   overflow: hidden
 
 canvas
@@ -21,6 +20,8 @@ canvas
 #overlay
   position: relative
   z-index: 1
+  width: 600px
+  max-width: 100%
   pointer-events: none
   -webkit-touch-callout: none
   user-select: none
@@ -36,7 +37,7 @@ canvas
   list-style: none
   padding: 0
 
-  li
+  li, span
     display: inline-block
     height: 24px
     width: 24px

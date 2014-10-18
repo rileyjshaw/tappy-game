@@ -12,7 +12,7 @@ module.exports = [
     title: '(Intro for kung-fu Fighting)',
     song: '-----_-_-_-_-'
   }, {
-    title: 'Happy birthday',
+    title: 'Happy birthday to you',
     song: '-_--__-__-__-'
   }, {
     title: '...L, M, N, O, P! Q, R, S...',
@@ -35,5 +35,8 @@ module.exports = [
   }, {
     title: 'YYZ',
     song: '-_--_-_-_--_-_-_-_--'
+  }, {
+    title: 'Rudolph the red-nosed reindeer',
+    song: '--_--_-_-_-'
   }
 ];

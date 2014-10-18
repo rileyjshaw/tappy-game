@@ -1,5 +1,7 @@
-var levels = shuffle(require('./levels.js'));
 var DOM = require('./DOM.js');
+var levels = shuffle(require('./levels.js'));
+var randColor = require('./randColor.js');
+var ripple = require('./ripple.js');
 
 var last, next, checkTimer, clicks, answer, answerLength;
 
@@ -46,6 +48,7 @@ function gameOver () {
 function nextLevel () {
   var level = levels.pop();
   if (level) {
+    ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
     DOM.overlay.className = 'hidden';
     answer = parseSong(level.song);
     answerLength = answer.length;
@@ -83,7 +86,7 @@ function check () {
     return acc + Math.abs(obs - exp) / exp;
   }, 0) / answerLength;
 
-  if (error < 0.1) nextLevel();
+  if (error < 0.16) nextLevel('Let\'s get started!');
   reset();
 }
 
@@ -95,18 +98,20 @@ function reset () {
 }
 
 function clickHandler () {
-  var currentLength = 0;
-  last = next;
-  next = new Date().getTime();
+  if (answerLength) {
+    var currentLength = 0;
+    last = next;
+    next = new Date().getTime();
 
-  if (last) currentLength = clicks.push(next - last);
+    if (last) currentLength = clicks.push(next - last);
 
-  DOM.dots.children[currentLength].className = 'marked';
+    DOM.dots.children[currentLength].className = 'marked';
 
-  if (currentLength === answerLength) check();
+    if (currentLength === answerLength) check();
+  } else nextLevel();
 }
 
 reset();
-nextLevel();
+ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
 
 module.exports = clickHandler;
