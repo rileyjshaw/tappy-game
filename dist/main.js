@@ -237,11 +237,29 @@ module.exports = [
     title: 'Every little thing she does is magic',
     song: '-----_--_-_-_-'
   }, {
-    title: 'YYZ',
+    title: 'YYZ (instrumental, morse code)',
     song: '-_--_-_-_--_-_-_-_--'
   }, {
     title: 'Rudolph the red-nosed reindeer',
     song: '--_--_-_-_-'
+  }, {
+    title: 'Sittin\' on the dock of the bay, wasting time',
+    song: '--------____-_--'
+  }, {
+    title: 'What\'s love got to do, got to do with it?',
+    song: '-___-___-_--____-_--_--'
+  }, {
+    title: 'Born and raised in South Detrooooooit',
+    song: '-----_--_-'
+  }, {
+    title: 'Dōmo arigatō, Mr. Roboto',
+    song: '-----_--_-_--_-'
+  }, {
+    title: 'Anyway you want it, that\'s the way you need it',
+    song: '-_----_--_----_-'
+  }, {
+    title: 'He\'s just a poor boy from a poor family, spare him his life from this monstrosity',
+    song: '-_---_-_---_---_-_---_---_---'
   }
 ];
 
