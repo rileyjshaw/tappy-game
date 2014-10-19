@@ -61,7 +61,7 @@ module.exports = [
     song: '---_-_-_-_____-___-'
   }, {
     title: 'Sign, sign, everywhere a sign',
-    song: '-___-__-_----'
+    song: '-___-___-----'
   }, {
     title: 'It was all a dream, I used to read Word Up Magazine',
     song: '---_--___----_--_---'
