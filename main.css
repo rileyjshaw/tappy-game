@@ -55,7 +55,7 @@ canvas {
   margin: 0 8px;
   -moz-box-sizing: border-box;
        box-sizing: border-box;
-  border: 1px white dashed;
+  border: 1px white solid;
   border-radius: 12px;
   -webkit-transition: background 0.2s ease-in-out;
           transition: background 0.2s ease-in-out; }

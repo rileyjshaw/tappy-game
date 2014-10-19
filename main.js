@@ -151,7 +151,8 @@ function nextLevel () {
       var dots = DOM.dots;
       var currentLength = dots.children.length - 1;
 
-      DOM.songTitle.textContent = level.title;
+      // using innnerHTML in stead of textContent to preserve &nbsp;s
+      DOM.songTitle.innerHTML = level.title;
 
       while (currentLength++ < answerLength) dots.appendChild(document.createElement('li'));
       while (--currentLength > answerLength) dots.removeChild(dots.lastChild);
@@ -183,7 +184,7 @@ function check () {
 
   if (error < 0.16) return nextLevel();
   else {
-    if (++fails > 4) DOM.skip.className = '';
+    if (++fails > 3) DOM.skip.className = '';
     reset();
   }
 }
@@ -221,71 +222,80 @@ module.exports = clickHandler;
 },{"./DOM.js":2,"./levels.js":4,"./randColor.js":6}],4:[function(require,module,exports){
 module.exports = [
   {
-    title: 'Shave and a haircut, two bits!',
+    title: 'Shave and a haircut, two&nbsp;bits!',
     song: '-_---_-___-_-'
   }, {
-    title: 'Oh, Canada!',
+    title: 'Oh,&nbsp;Canada!',
     song: '-___-__--'
   }, {
-    title: 'Op, op, op, op, oppa Gagnam style',
+    title: 'Op, op, op, op, oppa Gagnam&nbsp;style',
     song: '-__-_-_-__-----'
   }, {
-    title: '(Intro for kung-fu Fighting)',
+    title: '(Intro for kung-fu&nbsp;Fighting)',
     song: '-----_-_-_-_-'
   }, {
-    title: 'Happy birthday to you',
+    title: 'Happy birthday to&nbsp;you',
     song: '-_--__-__-__-'
   }, {
-    title: '...L, M, N, O, P! Q, R, S...',
+    title: '...L, M, N, O, P! Q, R,&nbsp;S...',
     song: '-----___-_-_-'
   }, {
-    title: 'Bye, bye, Miss American Pie',
+    title: 'Bye, bye, Miss American&nbsp;Pie',
     song: '-___-_------'
   }, {
-    title: 'Hey pretty thing let me light your candle \'cause...',
+    title: 'Hey pretty thing let me light your candle&nbsp;&rsquo;cause...',
     song: '-_---_---_----'
   }, {
-    title: 'Oh, won\'t you take me home tonight',
+    title: 'Oh, won&rsquo;t you take me home&nbsp;tonight',
     song: '-___________-_-_-_-_-_--'
   }, {
-    title: 'When I was a young warthog',
+    title: 'When I was a young&nbsp;warthog',
     song: '-_-_---_-_-'
   }, {
-    title: 'Every little thing she does is magic',
+    title: 'Every little thing she does is&nbsp;magic',
     song: '-----_--_-_-_-'
   }, {
-    title: 'YYZ (instrumental, morse code)',
+    title: 'YYZ (instrumental, morse&nbsp;code)',
     song: '-_--_-_-_--_-_-_-_--'
   }, {
-    title: 'Rudolph the red-nosed reindeer',
+    title: 'Rudolph the red-nosed&nbsp;reindeer',
     song: '--_--_-_-_-'
   }, {
-    title: 'Sittin\' on the dock of the bay, wasting time',
+    title: 'Sittin&rsquo; on the dock of the bay, wasting&nbsp;time',
     song: '--------____-_--'
   }, {
-    title: 'What\'s love got to do, got to do with it?',
+    title: 'What&rsquo;s love got to do, got to do with&nbsp;it?',
     song: '-___-___-_--____-_--_--'
   }, {
-    title: 'Born and raised in South Detrooooooit',
+    title: 'Born and raised in South&nbsp;Detrooooooit',
     song: '-----_--_-'
   }, {
-    title: 'Dōmo arigatō, Mr. Roboto',
+    title: 'Dōmo arigatō, Mr.&nbsp;Roboto',
     song: '-----_--_-_--_-'
   }, {
-    title: 'Anyway you want it, that\'s the way you need it',
+    title: 'Anyway you want it, that&rsquo;s the way you need&nbsp;it',
     song: '-_----_--_----_-'
   }, {
-    title: 'He\'s just a poor boy from a poor family, spare him his life from this monstrosity',
+    title: 'He&rsquo;s just a poor boy from a poor family, spare him his life from this&nbsp;monstrosity',
     song: '-_---_-_---_---_-_---_---_---'
   }, {
-    title: 'Sippin\' on gin and juice, laid back',
+    title: 'Sippin&rsquo; on gin and juice, laid&nbsp;back',
     song: '---_-_-_-_____-___-'
   }, {
-    title: 'Sign, sign, everywhere a sign',
-    song: '-___-__-_----'
+    title: 'Sign, sign, everywhere a&nbsp;sign',
+    song: '-___-___-----'
   }, {
-    title: 'It was all a dream, I used to read Word Up Magazine',
+    title: 'It was all a dream, I used to read Word Up&nbsp;Magazine',
     song: '---_--___----_--_---'
+  }, {
+    title: 'Call on me, call on&nbsp;me',
+    song: '---________-_--'
+  }, {
+    title: 'You actin&rsquo; kinda shady, ain&rsquo;t calling me&nbsp;baby',
+    song: '------_-_-----_-'
+  }, {
+    title: '&rsquo;Cause my body too bootylicious for ya&nbsp;babe',
+    song: '-_-_-_--_-_--_-_-_--'
   }
 ];
 
