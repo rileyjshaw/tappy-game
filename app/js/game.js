@@ -68,7 +68,8 @@ function nextLevel () {
       var dots = DOM.dots;
       var currentLength = dots.children.length - 1;
 
-      DOM.songTitle.textContent = level.title;
+      // using innnerHTML in stead of textContent to preserve &nbsp;s
+      DOM.songTitle.innerHTML = level.title;
 
       while (currentLength++ < answerLength) dots.appendChild(document.createElement('li'));
       while (--currentLength > answerLength) dots.removeChild(dots.lastChild);
@@ -100,7 +101,7 @@ function check () {
 
   if (error < 0.16) return nextLevel();
   else {
-    if (++fails > 4) DOM.skip.className = '';
+    if (++fails > 3) DOM.skip.className = '';
     reset();
   }
 }
