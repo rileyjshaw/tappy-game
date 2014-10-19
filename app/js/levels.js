@@ -56,5 +56,14 @@ module.exports = [
   }, {
     title: 'He\'s just a poor boy from a poor family, spare him his life from this monstrosity',
     song: '-_---_-_---_---_-_---_---_---'
+  }, {
+    title: 'Sippin\' on gin and juice, laid back',
+    song: '---_-_-_-_____-___-'
+  }, {
+    title: 'Sign, sign, everywhere a sign',
+    song: '-___-__-_----'
+  }, {
+    title: 'It was all a dream, I used to read Word Up Magazine',
+    song: '---_--___----_--_---'
   }
 ];
