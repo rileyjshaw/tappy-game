@@ -6,9 +6,13 @@ var timer = require('./game.js');
 var spacePressed = false;
 var resizer = null;
 
-function handleAction (x, y, replay) {
-  var color = timer(replay);
+function handleAction (x, y, replay, skip) {
+  var color = timer(replay, skip);
   ripple(x, y, color);
+}
+
+function handleSkip () {
+  handleAction(DOM.width / 2, DOM.height / 2, false, true);
 }
 
 function handleReplay () {
@@ -39,6 +43,7 @@ function handleResize () {
   resizer = setTimeout(DOM.updateDimensions, 300);
 }
 
+DOM.skip.addEventListener('click', handleSkip, false);
 DOM.replay.addEventListener('click', handleReplay, false);
 DOM.canvas.addEventListener('mousedown', handleMousedown, false);
 document.addEventListener('keydown', handleKeydown, false);
@@ -64,6 +69,7 @@ var DOM = {
   dots: document.querySelector('.dots'),
   overlay: document.getElementById('overlay'),
   replay: document.querySelector('.replay'),
+  skip: document.getElementById('skip'),
   songTitle: document.querySelector('.instructions'),
   updateDimensions: updateDimensions
 };
@@ -79,7 +85,7 @@ var DOM = require('./DOM.js');
 var levels = require('./levels.js');
 var randColor = require('./randColor.js');
 
-var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList;
+var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList, fails;
 
 // Fisher-Yates shuffle, adapted from lodash
 function shuffle (array) {
@@ -131,6 +137,11 @@ function endGame () {
 
 function nextLevel () {
   var level = levelList.pop();
+
+  reset();
+  fails = 0;
+  DOM.skip.className = 'hidden';
+
   if (level) {
     DOM.overlay.className = 'hidden';
     answer = parseSong(level.song);
@@ -150,6 +161,7 @@ function nextLevel () {
   } else {
     endGame();
   }
+
   return randColor();
 }
 
@@ -169,8 +181,11 @@ function check () {
     return acc + Math.abs(obs - exp) / exp;
   }, 0) / answerLength;
 
-  reset();
-  if (error < 0.16) return nextLevel('Let\'s get started!');
+  if (error < 0.16) return nextLevel();
+  else {
+    if (++fails > 4) DOM.skip.className = '';
+    reset();
+  }
 }
 
 function reset () {
@@ -180,11 +195,13 @@ function reset () {
   clicks = [];
 }
 
-function clickHandler (replay) {
+function clickHandler (replay, skip) {
   if (gameOver) {
     if (replay) startGame();
     return randColor();
-  } else if (answerLength) {
+  } else if (!answerLength || skip) {
+    return nextLevel();
+  } else {
     var currentLength = 0;
     last = next;
     next = new Date().getTime();
@@ -194,7 +211,7 @@ function clickHandler (replay) {
     DOM.dots.children[currentLength].className = 'marked';
 
     if (currentLength === answerLength) return check();
-  } else return nextLevel();
+  }
 }
 
 startGame(true);
@@ -353,7 +370,7 @@ module.exports = function () {
 },{}],7:[function(require,module,exports){
 var DOM = require('./DOM.js');
 
-var rippleSpeed = DOM.maxRadius / 60;
+var rippleSpeed = DOM.maxRadius / 40;
 var batch = [];
 
 function ripple (x, y, color) {
