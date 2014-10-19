@@ -4,19 +4,27 @@ var ripple = require('./ripple.js');
 var timer = require('./game.js');
 
 var spacePressed = false;
+var resizer = null;
+
+function handleAction (x, y, replay) {
+  var color = timer(replay);
+  ripple(x, y, color);
+}
+
+function handleReplay () {
+  handleAction(DOM.width / 2, DOM.height / 2, true);
+}
 
 function handleMousedown (e) {
   e = e || window.event;
   var coords = DOM.canvas.getCoords(e);
-  timer();
-  ripple(coords.x, coords.y);
+  handleAction(coords.x, coords.y);
 }
 
 function handleKeydown (e) {
   e = e || window.event;
   if (!spacePressed && e.keyCode === 32) {
-    timer();
-    ripple(DOM.windowWidth / 2, DOM.windowHeight / 2);
+    handleAction(DOM.width / 2, DOM.height / 2);
     spacePressed = true;
   }
 }
@@ -26,53 +34,63 @@ function handleKeyup (e) {
   if (e.keyCode === 32) spacePressed = false;
 }
 
+function handleResize () {
+  clearTimeout(resizer);
+  resizer = setTimeout(DOM.updateDimensions, 300);
+}
+
+DOM.replay.addEventListener('click', handleReplay, false);
 DOM.canvas.addEventListener('mousedown', handleMousedown, false);
 document.addEventListener('keydown', handleKeydown, false);
 document.addEventListener('keyup', handleKeyup, false);
+window.addEventListener('resize', handleResize, false);
+
+ripple(DOM.width / 2, DOM.height / 2, '#03a9f4');
 
 },{"./DOM.js":2,"./game.js":3,"./ripple.js":7}],2:[function(require,module,exports){
-var windowHeight = window.innerHeight;
-var windowWidth = window.innerWidth;
-var overlay = document.getElementById('overlay');
-var canvas = require('./newHDCanvas.js')(windowWidth, windowHeight, overlay);
-var ctx = canvas.getContext('2d');
+function updateDimensions () {
+  // update heights
+  DOM.height = window.innerHeight * DOM.canvas.ratio;
+  DOM.canvas.height = DOM.height;
 
-module.exports = {
-  canvas: canvas,
-  ctx: ctx,
-  dots: document.querySelector('ul.dots'),
-  overlay: overlay,
+  // update widths
+  DOM.width = window.innerWidth * DOM.canvas.ratio;
+  DOM.canvas.width = DOM.width;
+
+  DOM.maxRadius = Math.sqrt(Math.pow(DOM.width, 2) + Math.pow(DOM.height, 2));
+}
+
+var DOM = {
+  dots: document.querySelector('.dots'),
+  overlay: document.getElementById('overlay'),
+  replay: document.querySelector('.replay'),
   songTitle: document.querySelector('.instructions'),
-  windowHeight: windowHeight,
-  windowWidth: windowWidth
+  updateDimensions: updateDimensions
 };
+
+DOM.canvas = require('./newHDCanvas.js')(DOM.width, DOM.height, DOM.overlay);
+DOM.ctx = DOM.canvas.getContext('2d');
+DOM.updateDimensions();
+
+module.exports = DOM;
 
 },{"./newHDCanvas.js":5}],3:[function(require,module,exports){
 var DOM = require('./DOM.js');
-var levels = shuffle(require('./levels.js'));
+var levels = require('./levels.js');
 var randColor = require('./randColor.js');
-var ripple = require('./ripple.js');
 
-var last, next, checkTimer, clicks, answer, answerLength;
+var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList;
 
+// Fisher-Yates shuffle, adapted from lodash
 function shuffle (array) {
-  var counter = array.length, temp, index;
+  var index = -1, length = array.length, result = Array(length);
 
-  // While there are elements in the array
-  while (counter > 0) {
-    // Pick a random index
-    index = Math.floor(Math.random() * counter);
-
-    // Decrease counter by 1
-    counter--;
-
-    // And swap the last element with it
-    temp = array[counter];
-    array[counter] = array[index];
-    array[index] = temp;
-  }
-
-  return array;
+  array.forEach(function (value) {
+    var rand = Math.floor(Math.random() * (++index + 1));
+    result[index] = result[rand];
+    result[rand] = value;
+  });
+  return result;
 }
 
 function parseSong (song) {
@@ -91,14 +109,29 @@ function parseSong (song) {
   return answer.slice(1);
 }
 
-function gameOver () {
-  alert('You win!');
+function startGame (first) {
+  gameOver = false;
+  levelList = shuffle(levels);
+
+  if (first) reset();
+  else {
+    DOM.overlay.className = 'hidden gameOver';
+    setTimeout(nextLevel, 300);
+  }
+}
+
+function endGame () {
+  gameOver = true;
+  DOM.overlay.className = 'hidden';
+  setTimeout(function () {
+    DOM.songTitle.textContent = 'You win!';
+    DOM.overlay.className = 'gameOver';
+  }, 300);
 }
 
 function nextLevel () {
-  var level = levels.pop();
+  var level = levelList.pop();
   if (level) {
-    ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
     DOM.overlay.className = 'hidden';
     answer = parseSong(level.song);
     answerLength = answer.length;
@@ -114,10 +147,10 @@ function nextLevel () {
 
       DOM.overlay.className = '';
     }, 300);
-
   } else {
-    gameOver();
+    endGame();
   }
+  return randColor();
 }
 
 function check () {
@@ -136,8 +169,8 @@ function check () {
     return acc + Math.abs(obs - exp) / exp;
   }, 0) / answerLength;
 
-  if (error < 0.16) nextLevel('Let\'s get started!');
   reset();
+  if (error < 0.16) return nextLevel('Let\'s get started!');
 }
 
 function reset () {
@@ -147,8 +180,11 @@ function reset () {
   clicks = [];
 }
 
-function clickHandler () {
-  if (answerLength) {
+function clickHandler (replay) {
+  if (gameOver) {
+    if (replay) startGame();
+    return randColor();
+  } else if (answerLength) {
     var currentLength = 0;
     last = next;
     next = new Date().getTime();
@@ -157,16 +193,15 @@ function clickHandler () {
 
     DOM.dots.children[currentLength].className = 'marked';
 
-    if (currentLength === answerLength) check();
-  } else nextLevel();
+    if (currentLength === answerLength) return check();
+  } else return nextLevel();
 }
 
-reset();
-ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
+startGame(true);
 
 module.exports = clickHandler;
 
-},{"./DOM.js":2,"./levels.js":4,"./randColor.js":6,"./ripple.js":7}],4:[function(require,module,exports){
+},{"./DOM.js":2,"./levels.js":4,"./randColor.js":6}],4:[function(require,module,exports){
 module.exports = [
   {
     title: 'Shave and a haircut, two bits!',
@@ -187,7 +222,7 @@ module.exports = [
     title: '...L, M, N, O, P! Q, R, S...',
     song: '-----___-_-_-'
   }, {
-    title: 'Bye, bye, Mrs. American Pie',
+    title: 'Bye, bye, Miss American Pie',
     song: '-___-_------'
   }, {
     title: 'Hey pretty thing let me light your candle \'cause...',
@@ -232,8 +267,7 @@ module.exports = function (width, height, insertAfter) {
 
     canvas.width = width * ratio;
     canvas.height = height * ratio;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
+    canvas.ratio = ratio;
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     return canvas;
@@ -256,8 +290,8 @@ module.exports = function (width, height, insertAfter) {
     var canvasY = event.pageY - totalOffsetY;
 
     return {
-      x: canvasX,
-      y: canvasY
+      x: canvasX * this.ratio,
+      y: canvasY * this.ratio
     };
   };
 
@@ -271,14 +305,14 @@ module.exports = function (width, height, insertAfter) {
 };
 
 },{}],6:[function(require,module,exports){
-var currentIndex = 0;
+// from Material Design, http://www.google.com/design/spec/style/color.html
 var colors = [
-  '#9c27b0',
   '#03a9f4',
+  '#9c27b0',
   '#ff9800',
   '#ff5177'
 ];
-var length = colors.length;
+var currentIndex = 0, length = colors.length;
 
 module.exports = function () {
   var index;
@@ -292,8 +326,7 @@ module.exports = function () {
 },{}],7:[function(require,module,exports){
 var DOM = require('./DOM.js');
 
-var maxRadius = Math.max(DOM.windowWidth, DOM.windowHeight);
-var rippleSpeed = maxRadius / 40;
+var rippleSpeed = DOM.maxRadius / 60;
 var batch = [];
 
 function ripple (x, y, color) {
@@ -312,10 +345,10 @@ function tick () {
   batch.forEach(function (circle) { circle.radius += rippleSpeed; });
 
   // drawing step:
-  DOM.ctx.clearRect(0, 0, DOM.windowWidth, DOM.windowHeight);
+  DOM.ctx.clearRect(0, 0, DOM.width, DOM.height);
 
-  batch.forEach(function (circle) {
-    DOM.ctx.fillStyle = circle.color || 'rgba(255,255,255,' + (1 - circle.radius / maxRadius) * 0.3 + ')';
+  batch.forEach(function (circle, i) {
+    DOM.ctx.fillStyle = circle.color || 'rgba(255,255,255,' + Math.max((1 - circle.radius / DOM.maxRadius), 0.001) * 0.3 + ')';
     DOM.ctx.beginPath();
     DOM.ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
     DOM.ctx.closePath();
@@ -324,7 +357,7 @@ function tick () {
 
   // remove finished animations step:
   batch = batch.filter(function (circle) {
-    if (circle.radius < maxRadius) return true;
+    if (circle.radius < DOM.maxRadius) return true;
     if (circle.color) DOM.canvas.style.backgroundColor = circle.color;
     return false;
   });
