@@ -18,7 +18,7 @@ module.exports = [
     title: '...L, M, N, O, P! Q, R, S...',
     song: '-----___-_-_-'
   }, {
-    title: 'Bye, bye, Mrs. American Pie',
+    title: 'Bye, bye, Miss American Pie',
     song: '-___-_------'
   }, {
     title: 'Hey pretty thing let me light your candle \'cause...',

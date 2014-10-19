@@ -11,7 +11,9 @@ body {
 canvas {
   position: absolute;
   top: 0;
-  left: 0; }
+  left: 0;
+  height: 100%;
+  width: 100%; }
 
 .vcent, #overlay {
   display: inline-block;
@@ -21,34 +23,53 @@ canvas {
   position: relative;
   z-index: 1;
   width: 600px;
-  max-width: 100%;
+  max-width: 90%;
+  -webkit-transition: opacity 0.2s ease-in-out;
+          transition: opacity 0.2s ease-in-out;
   pointer-events: none;
-  -webkit-touch-callout: none;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  -webkit-transition: opacity 0.2s ease-in-out;
-          transition: opacity 0.2s ease-in-out; }
+  -webkit-touch-callout: none; }
   #overlay.hidden {
     opacity: 0; }
 
 .instructions {
-  font-size: 30px; }
+  line-height: 1.5em;
+  margin-top: 0;
+  font-size: 30px;
+  font-weight: 400; }
 
 .dots {
-  list-style: none;
-  padding: 0; }
-  .dots li, .dots span {
-    display: inline-block;
-    height: 24px;
-    width: 24px;
-    margin: 0 8px;
-    -moz-box-sizing: border-box;
-         box-sizing: border-box;
-    border: 1px white dashed;
-    border-radius: 12px;
-    -webkit-transition: background 0.2s ease-in-out;
-            transition: background 0.2s ease-in-out; }
-    .dots li.marked, .dots span.marked {
-      background: #fff; }
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none; }
+  .gameOver .dots {
+    display: none; }
+
+.dots li, .circle {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  margin: 0 8px;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
+  border: 1px white dashed;
+  border-radius: 12px;
+  -webkit-transition: background 0.2s ease-in-out;
+          transition: background 0.2s ease-in-out; }
+  .dots li.marked, .circle.marked {
+    background: #fff; }
+
+.replay {
+  display: none;
+  height: 96px;
+  width: 96px;
+  border: 0;
+  outline: 0;
+  background: transparent url("./replay.svg");
+  cursor: pointer;
+  pointer-events: all; }
+  .gameOver .replay {
+    display: inline-block; }

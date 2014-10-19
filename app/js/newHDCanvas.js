@@ -19,8 +19,7 @@ module.exports = function (width, height, insertAfter) {
 
     canvas.width = width * ratio;
     canvas.height = height * ratio;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
+    canvas.ratio = ratio;
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     return canvas;
@@ -43,8 +42,8 @@ module.exports = function (width, height, insertAfter) {
     var canvasY = event.pageY - totalOffsetY;
 
     return {
-      x: canvasX,
-      y: canvasY
+      x: canvasX * this.ratio,
+      y: canvasY * this.ratio
     };
   };
 

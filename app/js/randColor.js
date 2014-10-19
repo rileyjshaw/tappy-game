@@ -1,11 +1,11 @@
-var currentIndex = 0;
+// from Material Design, http://www.google.com/design/spec/style/color.html
 var colors = [
-  '#9c27b0',
   '#03a9f4',
+  '#9c27b0',
   '#ff9800',
   '#ff5177'
 ];
-var length = colors.length;
+var currentIndex = 0, length = colors.length;
 
 module.exports = function () {
   var index;

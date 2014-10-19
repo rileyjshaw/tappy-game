@@ -1,28 +1,19 @@
 var DOM = require('./DOM.js');
-var levels = shuffle(require('./levels.js'));
+var levels = require('./levels.js');
 var randColor = require('./randColor.js');
-var ripple = require('./ripple.js');
 
-var last, next, checkTimer, clicks, answer, answerLength;
+var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList;
 
+// Fisher-Yates shuffle, adapted from lodash
 function shuffle (array) {
-  var counter = array.length, temp, index;
+  var index = -1, length = array.length, result = Array(length);
 
-  // While there are elements in the array
-  while (counter > 0) {
-    // Pick a random index
-    index = Math.floor(Math.random() * counter);
-
-    // Decrease counter by 1
-    counter--;
-
-    // And swap the last element with it
-    temp = array[counter];
-    array[counter] = array[index];
-    array[index] = temp;
-  }
-
-  return array;
+  array.forEach(function (value) {
+    var rand = Math.floor(Math.random() * (++index + 1));
+    result[index] = result[rand];
+    result[rand] = value;
+  });
+  return result;
 }
 
 function parseSong (song) {
@@ -41,14 +32,29 @@ function parseSong (song) {
   return answer.slice(1);
 }
 
-function gameOver () {
-  alert('You win!');
+function startGame (first) {
+  gameOver = false;
+  levelList = shuffle(levels);
+
+  if (first) reset();
+  else {
+    DOM.overlay.className = 'hidden gameOver';
+    setTimeout(nextLevel, 300);
+  }
+}
+
+function endGame () {
+  gameOver = true;
+  DOM.overlay.className = 'hidden';
+  setTimeout(function () {
+    DOM.songTitle.textContent = 'You win!';
+    DOM.overlay.className = 'gameOver';
+  }, 300);
 }
 
 function nextLevel () {
-  var level = levels.pop();
+  var level = levelList.pop();
   if (level) {
-    ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
     DOM.overlay.className = 'hidden';
     answer = parseSong(level.song);
     answerLength = answer.length;
@@ -64,10 +70,10 @@ function nextLevel () {
 
       DOM.overlay.className = '';
     }, 300);
-
   } else {
-    gameOver();
+    endGame();
   }
+  return randColor();
 }
 
 function check () {
@@ -86,8 +92,8 @@ function check () {
     return acc + Math.abs(obs - exp) / exp;
   }, 0) / answerLength;
 
-  if (error < 0.16) nextLevel('Let\'s get started!');
   reset();
+  if (error < 0.16) return nextLevel('Let\'s get started!');
 }
 
 function reset () {
@@ -97,8 +103,11 @@ function reset () {
   clicks = [];
 }
 
-function clickHandler () {
-  if (answerLength) {
+function clickHandler (replay) {
+  if (gameOver) {
+    if (replay) startGame();
+    return randColor();
+  } else if (answerLength) {
     var currentLength = 0;
     last = next;
     next = new Date().getTime();
@@ -107,11 +116,10 @@ function clickHandler () {
 
     DOM.dots.children[currentLength].className = 'marked';
 
-    if (currentLength === answerLength) check();
-  } else nextLevel();
+    if (currentLength === answerLength) return check();
+  } else return nextLevel();
 }
 
-reset();
-ripple(DOM.windowWidth / 2, DOM.windowHeight / 2, randColor());
+startGame(true);
 
 module.exports = clickHandler;

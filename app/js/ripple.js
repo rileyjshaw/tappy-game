@@ -1,7 +1,6 @@
 var DOM = require('./DOM.js');
 
-var maxRadius = Math.max(DOM.windowWidth, DOM.windowHeight);
-var rippleSpeed = maxRadius / 40;
+var rippleSpeed = DOM.maxRadius / 60;
 var batch = [];
 
 function ripple (x, y, color) {
@@ -20,10 +19,10 @@ function tick () {
   batch.forEach(function (circle) { circle.radius += rippleSpeed; });
 
   // drawing step:
-  DOM.ctx.clearRect(0, 0, DOM.windowWidth, DOM.windowHeight);
+  DOM.ctx.clearRect(0, 0, DOM.width, DOM.height);
 
-  batch.forEach(function (circle) {
-    DOM.ctx.fillStyle = circle.color || 'rgba(255,255,255,' + (1 - circle.radius / maxRadius) * 0.3 + ')';
+  batch.forEach(function (circle, i) {
+    DOM.ctx.fillStyle = circle.color || 'rgba(255,255,255,' + Math.max((1 - circle.radius / DOM.maxRadius), 0.001) * 0.3 + ')';
     DOM.ctx.beginPath();
     DOM.ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
     DOM.ctx.closePath();
@@ -32,7 +31,7 @@ function tick () {
 
   // remove finished animations step:
   batch = batch.filter(function (circle) {
-    if (circle.radius < maxRadius) return true;
+    if (circle.radius < DOM.maxRadius) return true;
     if (circle.color) DOM.canvas.style.backgroundColor = circle.color;
     return false;
   });

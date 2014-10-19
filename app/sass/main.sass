@@ -12,6 +12,8 @@ canvas
   position: absolute
   top: 0
   left: 0
+  height: 100%
+  width: 100%
 
 .vcent, #overlay
   display: inline-block
@@ -21,32 +23,51 @@ canvas
   position: relative
   z-index: 1
   width: 600px
-  max-width: 100%
-  pointer-events: none
-  -webkit-touch-callout: none
-  user-select: none
+  max-width: 90%
   transition: opacity .2s ease-in-out
+  pointer-events: none
+  user-select: none
+  -webkit-touch-callout: none
 
   &.hidden
     opacity: 0
 
 .instructions
+  line-height: 1.5em
+  margin-top: 0
   font-size: 30px
+  font-weight: 400
 
 .dots
-  list-style: none
+  margin-bottom: 0
   padding: 0
+  list-style: none
 
-  li, span
+  .gameOver &
+    display: none
+
+.dots li, .circle
+  display: inline-block
+  height: 24px
+  width: 24px
+  margin: 0 8px
+  box-sizing: border-box
+  border: 1px white dashed
+  border-radius: 12px
+  transition: background .2s ease-in-out
+
+  &.marked
+    background: #fff
+
+.replay
+  display: none
+  height: 96px
+  width: 96px
+  border: 0
+  outline: 0
+  background: transparent url('./replay.svg')
+  cursor: pointer
+  pointer-events: all
+
+  .gameOver &
     display: inline-block
-    height: 24px
-    width: 24px
-    margin: 0 8px
-    box-sizing: border-box
-    border: 1px white dashed
-    border-radius: 12px
-    transition: background .2s ease-in-out
-
-    &.marked
-      background: #fff
-
