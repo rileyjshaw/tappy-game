@@ -5,9 +5,13 @@ var timer = require('./game.js');
 var spacePressed = false;
 var resizer = null;
 
-function handleAction (x, y, replay) {
-  var color = timer(replay);
+function handleAction (x, y, replay, skip) {
+  var color = timer(replay, skip);
   ripple(x, y, color);
+}
+
+function handleSkip () {
+  handleAction(DOM.width / 2, DOM.height / 2, false, true);
 }
 
 function handleReplay () {
@@ -38,6 +42,7 @@ function handleResize () {
   resizer = setTimeout(DOM.updateDimensions, 300);
 }
 
+DOM.skip.addEventListener('click', handleSkip, false);
 DOM.replay.addEventListener('click', handleReplay, false);
 DOM.canvas.addEventListener('mousedown', handleMousedown, false);
 document.addEventListener('keydown', handleKeydown, false);

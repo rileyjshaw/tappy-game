@@ -14,6 +14,7 @@ var DOM = {
   dots: document.querySelector('.dots'),
   overlay: document.getElementById('overlay'),
   replay: document.querySelector('.replay'),
+  skip: document.getElementById('skip'),
   songTitle: document.querySelector('.instructions'),
   updateDimensions: updateDimensions
 };

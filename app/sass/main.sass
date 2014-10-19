@@ -59,6 +59,20 @@ canvas
   &.marked
     background: #fff
 
+#skip
+  position: absolute
+  bottom: 12px
+  right: 12px
+  font-size: 18px
+  cursor: pointer
+  transition: opacity .8s ease-in-out
+
+  &.hidden
+    opacity: 0
+    pointer-events: none
+    user-select: none
+    -webkit-touch-callout: none
+
 .replay
   display: none
   height: 96px

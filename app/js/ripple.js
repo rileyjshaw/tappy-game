@@ -1,6 +1,6 @@
 var DOM = require('./DOM.js');
 
-var rippleSpeed = DOM.maxRadius / 60;
+var rippleSpeed = DOM.maxRadius / 40;
 var batch = [];
 
 function ripple (x, y, color) {
