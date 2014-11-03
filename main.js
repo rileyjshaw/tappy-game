@@ -437,7 +437,7 @@ module.exports = ripple;
 
 },{"./DOM":2}],8:[function(require,module,exports){
 var Howl = require('../../bower_components/howler/howler.min').Howl;
-var names = ['bell', 'bass', 'aha', 'snap', 'flutter', 'bitty'];
+var names = ['bell', 'bass', 'snap', 'flutter', 'bitty'];
 var extensions = ['mp3', 'ogg', 'wav'];
 var sounds = {};
 
