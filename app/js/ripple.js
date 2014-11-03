@@ -1,4 +1,4 @@
-var DOM = require('./DOM.js');
+var DOM = require('./DOM');
 
 var rippleSpeed = DOM.maxRadius / 40;
 var batch = [];

@@ -1,8 +1,9 @@
 {
   "name": "tappy",
-  "version": "1.0.0",
-  "description": "Tap the rhythm.",
-  "main": "dist/main.min.js",
+  "version": "1.0.0-beta",
+  "description": "Tap the rhythm of the lyrics displayed",
+  "repository": "https://github.com/rileyjshaw/tappy-game",
+  "main": "dist/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,7 +12,11 @@
     "click",
     "game",
     "password",
-    "song"
+    "song",
+    "music",
+    "rhythm",
+    "lyrics",
+    "game"
   ],
   "author": "rileyjshaw <i@rileyjshaw.com>",
   "license": "MIT",
@@ -31,5 +36,8 @@
     "gulp-streamify": "0.0.5",
     "gulp-gh-pages": "~0.3.3",
     "gulp-webserver": "~0.6.0"
+  },
+  "dependencies": {
+    "ismobilejs": "^0.3.4"
   }
 }

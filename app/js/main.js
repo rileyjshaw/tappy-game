@@ -1,13 +1,14 @@
-var DOM = require('./DOM.js');
-var ripple = require('./ripple.js');
-var timer = require('./game.js');
+var isMobile = require('ismobilejs').any;
+var DOM = require('./DOM');
+var ripple = require('./ripple');
+var timer = require('./game');
 
 var spacePressed = false;
 var resizer = null;
 
 function handleAction (x, y, replay, skip) {
   var color = timer(replay, skip);
-  ripple(x, y, color);
+  if (!isMobile || color) ripple(x, y, color);
 }
 
 function handleSkip () {
@@ -44,7 +45,7 @@ function handleResize () {
 
 DOM.skip.addEventListener('click', handleSkip, false);
 DOM.replay.addEventListener('click', handleReplay, false);
-DOM.canvas.addEventListener('mousedown', handleMousedown, false);
+DOM.canvas.addEventListener(isMobile ? 'touchstart' : 'mousedown', handleMousedown, false);
 document.addEventListener('keydown', handleKeydown, false);
 document.addEventListener('keyup', handleKeyup, false);
 window.addEventListener('resize', handleResize, false);

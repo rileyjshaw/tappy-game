@@ -6,7 +6,7 @@ module.exports = [
     title: 'Oh,&nbsp;Canada!',
     song: '-___-__--'
   }, {
-    title: 'Op, op, op, op, oppa Gagnam&nbsp;style',
+    title: 'Op, op, op, op, oppa&nbsp;Gagnam&nbsp;style',
     song: '-__-_-_-__-----'
   }, {
     title: '(Intro for kung-fu&nbsp;Fighting)',
@@ -15,7 +15,7 @@ module.exports = [
     title: 'Happy birthday to&nbsp;you',
     song: '-_--__-__-__-'
   }, {
-    title: '...L, M, N, O, P! Q, R,&nbsp;S...',
+    title: '...L, M, N, O, P! Q,&nbsp;R,&nbsp;S...',
     song: '-----___-_-_-'
   }, {
     title: 'Bye, bye, Miss American&nbsp;Pie',
@@ -63,7 +63,7 @@ module.exports = [
     title: 'Sign, sign, everywhere a&nbsp;sign',
     song: '-___-___-----'
   }, {
-    title: 'It was all a dream, I used to read Word Up&nbsp;Magazine',
+    title: 'It was all a dream, I used to read Word&nbsp;Up&nbsp;Magazine',
     song: '---_--___----_--_---'
   }, {
     title: 'Call on me, call on&nbsp;me',

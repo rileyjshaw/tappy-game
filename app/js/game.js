@@ -1,8 +1,9 @@
-var DOM = require('./DOM.js');
-var levels = require('./levels.js');
-var randColor = require('./randColor.js');
+var DOM = require('./DOM');
+var levels = require('./levels');
+var randColor = require('./randColor');
+var sounds = require('./sounds');
 
-var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList, fails;
+var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList, fails, newGame;
 
 // Fisher-Yates shuffle, adapted from lodash
 function shuffle (array) {
@@ -34,6 +35,7 @@ function parseSong (song) {
 
 function startGame (first) {
   gameOver = false;
+  newGame = true;
   levelList = shuffle(levels);
 
   if (first) reset();
@@ -44,6 +46,7 @@ function startGame (first) {
 }
 
 function endGame () {
+  sounds.bell.play();
   gameOver = true;
   DOM.overlay.className = 'hidden';
   setTimeout(function () {
@@ -51,6 +54,8 @@ function endGame () {
     DOM.overlay.className = 'gameOver';
   }, 300);
 }
+
+// bitty ditty / confused / fancy toast /
 
 function nextLevel () {
   var level = levelList.pop();
@@ -60,6 +65,10 @@ function nextLevel () {
   DOM.skip.className = 'hidden';
 
   if (level) {
+    if (newGame) {
+      sounds.bass.play();
+      newGame = false;
+    } else sounds.flutter.play();
     DOM.overlay.className = 'hidden';
     answer = parseSong(level.song);
     answerLength = answer.length;
@@ -101,7 +110,8 @@ function check () {
 
   if (error < 0.16) return nextLevel();
   else {
-    if (++fails > 3) DOM.skip.className = '';
+    sounds.bitty.play();
+    if (++fails) DOM.skip.className = '';
     reset();
   }
 }
@@ -129,6 +139,7 @@ function clickHandler (replay, skip) {
     DOM.dots.children[currentLength].className = 'marked';
 
     if (currentLength === answerLength) return check();
+    else sounds.snap.play();
   }
 }
 

@@ -1,4 +1,4 @@
 tappy-game
 ==========
 
-Tap the rhythm of the words displayed!
+Tap the rhythm of the lyrics displayed!

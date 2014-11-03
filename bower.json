@@ -1,0 +1,33 @@
+{
+  "name": "tappy-game",
+  "version": "1.0.0-beta",
+  "homepage": "http://tappy.pw",
+  "authors": [
+    "Riley Shaw <rileyjshaw@gmail.com>"
+  ],
+  "description": "Tap the rhythm of the lyrics displayed",
+  "main": "dist/index.html",
+  "keywords": [
+    "tap",
+    "click",
+    "game",
+    "password",
+    "song",
+    "music",
+    "rhythm",
+    "lyrics",
+    "game"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "howler": "~1.1.25"
+  }
+}
