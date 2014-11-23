@@ -43,7 +43,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('deploy', function () {
-  gulp.src(paths.dist + '/*.*')
+  gulp.src(paths.dist + '/**/*')
     .pipe($.ghPages('https://github.com/rileyjshaw/tappy.git', 'origin'));
 });
 
