@@ -1,78 +1,78 @@
 module.exports = [
   {
     title: 'Shave and a haircut, two&nbsp;bits!',
-    song: '-_---_-___-_-'
+    song: 'x.xxx.x...x.x'
   }, {
     title: 'Oh,&nbsp;Canada!',
-    song: '-___-__--'
+    song: 'x...x..xx'
   }, {
     title: 'Op, op, op, op, oppa&nbsp;Gagnam&nbsp;style',
-    song: '-__-_-_-__-----'
+    song: 'x..x.x.x..xxxxx'
   }, {
     title: '(Intro for kung-fu&nbsp;Fighting)',
-    song: '-----_-_-_-_-'
+    song: 'xxxxx.x.x.x.x'
   }, {
     title: 'Happy birthday to&nbsp;you',
-    song: '-_--__-__-__-'
+    song: 'x.xx..x..x..x'
   }, {
     title: '...L, M, N, O, P! Q,&nbsp;R,&nbsp;S...',
-    song: '-----___-_-_-'
+    song: 'xxxxx...x.x.x'
   }, {
     title: 'Bye, bye, Miss American&nbsp;Pie',
-    song: '-___-_------'
+    song: 'x...x.xxxxxx'
   }, {
     title: 'Hey pretty thing let me light your candle&nbsp;&rsquo;cause...',
-    song: '-_---_---_----'
+    song: 'x.xxx.xxx.xxxx'
   }, {
     title: 'Oh, won&rsquo;t you take me home&nbsp;tonight',
-    song: '-___________-_-_-_-_-_--'
+    song: 'x...........x.x.x.x.x.xx'
   }, {
     title: 'When I was a young&nbsp;warthog',
-    song: '-_-_---_-_-'
+    song: 'x.x.xxx.x.x'
   }, {
     title: 'Every little thing she does is&nbsp;magic',
-    song: '-----_--_-_-_-'
+    song: 'xxxxx.xx.x.x.x'
   }, {
     title: 'YYZ (instrumental, morse&nbsp;code)',
-    song: '-_--_-_-_--_-_-_-_--'
+    song: 'x.xx.x.x.xx.x.x.x.xx'
   }, {
     title: 'Rudolph the red-nosed&nbsp;reindeer',
-    song: '--_--_-_-_-'
+    song: 'xx.xx.x.x.x'
   }, {
     title: 'Sittin&rsquo; on the dock of the bay, wasting&nbsp;time',
-    song: '--------____-_--'
+    song: 'xxxxxxxx....x.xx'
   }, {
     title: 'What&rsquo;s love got to do, got to do with&nbsp;it?',
-    song: '-___-___-_--____-_--_--'
+    song: 'x...x...x.xx....x.xx.xx'
   }, {
     title: 'Born and raised in South&nbsp;Detrooooooit',
-    song: '-----_--_-'
+    song: 'xxxxx.xx.x'
   }, {
     title: 'Dōmo arigatō, Mr.&nbsp;Roboto',
-    song: '-----_--_-_--_-'
+    song: 'xxxxx.xx.x.xx.x'
   }, {
     title: 'Anyway you want it, that&rsquo;s the way you need&nbsp;it',
-    song: '-_----_--_----_-'
+    song: 'x.xxxx.xx.xxxx.x'
   }, {
     title: 'He&rsquo;s just a poor boy from a poor family, spare him his life from this&nbsp;monstrosity',
-    song: '-_---_-_---_---_-_---_---_---'
+    song: 'x.xxx.x.xxx.xxx.x.xxx.xxx.xxx'
   }, {
     title: 'Sippin&rsquo; on gin and juice, laid&nbsp;back',
-    song: '---_-_-_-_____-___-'
+    song: 'xxx.x.x.x.....x...x'
   }, {
     title: 'Sign, sign, everywhere a&nbsp;sign',
-    song: '-___-___-----'
+    song: 'x...x...xxxxx'
   }, {
     title: 'It was all a dream, I used to read Word&nbsp;Up&nbsp;Magazine',
-    song: '---_--___----_--_---'
+    song: 'xxx.xx...xxxx.xx.xxx'
   }, {
     title: 'Call on me, call on&nbsp;me',
-    song: '---________-_--'
+    song: 'xxx........x.xx'
   }, {
     title: 'You actin&rsquo; kinda shady, ain&rsquo;t calling me&nbsp;baby',
-    song: '------_-_-----_-'
+    song: 'xxxxxx.x.xxxxx.x'
   }, {
     title: '&rsquo;Cause my body too bootylicious for ya&nbsp;babe',
-    song: '-_-_-_--_-_--_-_-_--'
+    song: 'x.x.x.xx.x.xx.x.x.xx'
   }
 ];

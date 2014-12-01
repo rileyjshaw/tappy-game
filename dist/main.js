@@ -2,22 +2,24 @@
 var isMobile = require('ismobilejs').any;
 var DOM = require('./DOM');
 var ripple = require('./ripple');
-var timer = require('./game');
+var game = require('./game');
 
+var keysPressed = {};
 var spacePressed = false;
+var resetPressed = false;
 var resizer = null;
 
-function handleAction (x, y, replay, skip) {
-  var color = timer(replay, skip);
+function handleAction (x, y, variant) {
+  var color = game(variant);
   if (!isMobile || color) ripple(x, y, color);
 }
 
 function handleSkip () {
-  handleAction(DOM.width / 2, DOM.height / 2, false, true);
+  handleAction(DOM.width / 2, DOM.height / 2, 'skip');
 }
 
 function handleReplay () {
-  handleAction(DOM.width / 2, DOM.height / 2, true);
+  handleAction(DOM.width / 2, DOM.height / 2, 'replay');
 }
 
 function handleMousedown (e) {
@@ -27,16 +29,27 @@ function handleMousedown (e) {
 }
 
 function handleKeydown (e) {
+  var keyCode;
   e = e || window.event;
-  if (!spacePressed && e.keyCode === 32) {
-    handleAction(DOM.width / 2, DOM.height / 2);
-    spacePressed = true;
+  keyCode = e.keyCode;
+
+  if (!keysPressed[keyCode]) {
+    keysPressed[keyCode] = true;
+    if (keyCode === 32) handleAction(DOM.width / 2, DOM.height / 2);
+    else if (keyCode === 8 || keyCode === 27 || keyCode === 46)
+      handleAction(DOM.width / 2, DOM.height / 2, 'reset');
   }
+
+  e.preventDefault();
+  return false;
 }
 
 function handleKeyup (e) {
+  var keyCode;
   e = e || window.event;
-  if (e.keyCode === 32) spacePressed = false;
+  keyCode = e.keyCode;
+
+  if (keysPressed[keyCode]) keysPressed[keyCode] = false;
 }
 
 function handleResize () {
@@ -104,20 +117,18 @@ function shuffle (array) {
   return result;
 }
 
-function parseSong (song) {
-  var i, durations = [];
+function parseSong (song, note, tempo) {
+  var i, intervals = [];
 
-  if (song.charAt(0) !== '-' || song.charAt(song.length - 1) !== '-') {
-    throw song + ' is not a valid song! It needs to start and end with a dash.';
-  }
+  // default character
+  if (typeof note !== 'string' || note.length !== 1) note = 'x';
 
-  while (song.length) {
-    i = song.indexOf('-') + 1;
+  while ((i = song.indexOf(note) + 1)) {
     song = song.slice(i);
-    durations.push(i);
+    intervals.push(i * (tempo ? tempo : 1));
   }
 
-  return new tappy.Rhythm(durations.slice(1));
+  return new tappy.Rhythm(intervals.slice(1));
 }
 
 function startGame (first) {
@@ -162,7 +173,7 @@ function nextLevel () {
       var dots = DOM.dots;
       var currentLength = dots.children.length - 1;
 
-      // using innnerHTML in stead of textContent to preserve &nbsp;s
+      // using innnerHTML instead of textContent to preserve &nbsp;s
       DOM.songTitle.innerHTML = level.title;
 
       while (++currentLength < answerLength) dots.appendChild(document.createElement('li'));
@@ -183,19 +194,21 @@ function reset () {
   rhythm = new tappy.Rhythm();
 }
 
-function clickHandler (replay, skip) {
+function clickHandler (variant) {
   if (gameOver) {
-    if (replay) startGame();
+    if (variant === 'replay') startGame();
     return randColor();
-  } else if (!answerLength || skip) {
+  } else if (!answerLength || variant === 'skip') {
     return nextLevel();
+  } else if (variant === 'reset') {
+    reset();
   } else {
     var currentLength = rhythm.tap().length;
 
     DOM.dots.children[currentLength - 1].className = 'marked';
 
     if (currentLength === answerLength) {
-      if (tappy.compare(rhythm.done(), answer, true) > 0.80) {
+      if (tappy.compare(rhythm.done(), answer) > 0.80) {
         return nextLevel();
       } else {
         sounds.bitty.play();
@@ -216,79 +229,79 @@ module.exports = clickHandler;
 module.exports = [
   {
     title: 'Shave and a haircut, two&nbsp;bits!',
-    song: '-_---_-___-_-'
+    song: 'x.xxx.x...x.x'
   }, {
     title: 'Oh,&nbsp;Canada!',
-    song: '-___-__--'
+    song: 'x...x..xx'
   }, {
     title: 'Op, op, op, op, oppa&nbsp;Gagnam&nbsp;style',
-    song: '-__-_-_-__-----'
+    song: 'x..x.x.x..xxxxx'
   }, {
     title: '(Intro for kung-fu&nbsp;Fighting)',
-    song: '-----_-_-_-_-'
+    song: 'xxxxx.x.x.x.x'
   }, {
     title: 'Happy birthday to&nbsp;you',
-    song: '-_--__-__-__-'
+    song: 'x.xx..x..x..x'
   }, {
     title: '...L, M, N, O, P! Q,&nbsp;R,&nbsp;S...',
-    song: '-----___-_-_-'
+    song: 'xxxxx...x.x.x'
   }, {
     title: 'Bye, bye, Miss American&nbsp;Pie',
-    song: '-___-_------'
+    song: 'x...x.xxxxxx'
   }, {
     title: 'Hey pretty thing let me light your candle&nbsp;&rsquo;cause...',
-    song: '-_---_---_----'
+    song: 'x.xxx.xxx.xxxx'
   }, {
     title: 'Oh, won&rsquo;t you take me home&nbsp;tonight',
-    song: '-___________-_-_-_-_-_--'
+    song: 'x...........x.x.x.x.x.xx'
   }, {
     title: 'When I was a young&nbsp;warthog',
-    song: '-_-_---_-_-'
+    song: 'x.x.xxx.x.x'
   }, {
     title: 'Every little thing she does is&nbsp;magic',
-    song: '-----_--_-_-_-'
+    song: 'xxxxx.xx.x.x.x'
   }, {
     title: 'YYZ (instrumental, morse&nbsp;code)',
-    song: '-_--_-_-_--_-_-_-_--'
+    song: 'x.xx.x.x.xx.x.x.x.xx'
   }, {
     title: 'Rudolph the red-nosed&nbsp;reindeer',
-    song: '--_--_-_-_-'
+    song: 'xx.xx.x.x.x'
   }, {
     title: 'Sittin&rsquo; on the dock of the bay, wasting&nbsp;time',
-    song: '--------____-_--'
+    song: 'xxxxxxxx....x.xx'
   }, {
     title: 'What&rsquo;s love got to do, got to do with&nbsp;it?',
-    song: '-___-___-_--____-_--_--'
+    song: 'x...x...x.xx....x.xx.xx'
   }, {
     title: 'Born and raised in South&nbsp;Detrooooooit',
-    song: '-----_--_-'
+    song: 'xxxxx.xx.x'
   }, {
     title: 'Dōmo arigatō, Mr.&nbsp;Roboto',
-    song: '-----_--_-_--_-'
+    song: 'xxxxx.xx.x.xx.x'
   }, {
     title: 'Anyway you want it, that&rsquo;s the way you need&nbsp;it',
-    song: '-_----_--_----_-'
+    song: 'x.xxxx.xx.xxxx.x'
   }, {
     title: 'He&rsquo;s just a poor boy from a poor family, spare him his life from this&nbsp;monstrosity',
-    song: '-_---_-_---_---_-_---_---_---'
+    song: 'x.xxx.x.xxx.xxx.x.xxx.xxx.xxx'
   }, {
     title: 'Sippin&rsquo; on gin and juice, laid&nbsp;back',
-    song: '---_-_-_-_____-___-'
+    song: 'xxx.x.x.x.....x...x'
   }, {
     title: 'Sign, sign, everywhere a&nbsp;sign',
-    song: '-___-___-----'
+    song: 'x...x...xxxxx'
   }, {
     title: 'It was all a dream, I used to read Word&nbsp;Up&nbsp;Magazine',
-    song: '---_--___----_--_---'
+    song: 'xxx.xx...xxxx.xx.xxx'
   }, {
     title: 'Call on me, call on&nbsp;me',
-    song: '---________-_--'
+    song: 'xxx........x.xx'
   }, {
     title: 'You actin&rsquo; kinda shady, ain&rsquo;t calling me&nbsp;baby',
-    song: '------_-_-----_-'
+    song: 'xxxxxx.x.xxxxx.x'
   }, {
     title: '&rsquo;Cause my body too bootylicious for ya&nbsp;babe',
-    song: '-_-_-_--_-_--_-_-_--'
+    song: 'x.x.x.xx.x.xx.x.x.xx'
   }
 ];
 
@@ -560,6 +573,6 @@ module.exports = sounds;
 
 },{}],11:[function(require,module,exports){
 (function (global){
-!function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("function"==typeof define&&define.amd)define([],t);else{var e;"undefined"!=typeof window?e=window:"undefined"!=typeof global?e=global:"undefined"!=typeof self&&(e=self),e.tappy=t()}}(function(){return function t(e,n,r){function o(a,f){if(!n[a]){if(!e[a]){var u="function"==typeof require&&require;if(!f&&u)return u(a,!0);if(i)return i(a,!0);var h=new Error("Cannot find module '"+a+"'");throw h.code="MODULE_NOT_FOUND",h}var p=n[a]={exports:{}};e[a][0].call(p.exports,function(t){var n=e[a][1][t];return o(n?n:t)},p,p.exports,t,e,n,r)}return n[a].exports}for(var i="function"==typeof require&&require,a=0;a<r.length;a++)o(r[a]);return o}({1:[function(t,e){function n(t,e,n){var r,o;if("number"==typeof t._tap||"number"==typeof e._tap)throw new Error("Can't compare Rhythms before calling done()");return o=t.length,o!==e.length?!1:(t=t._taps,e=e._taps,n===!0&&(r=t.map(function(t,n){return t/e[n]}).reduce(function(t,e){return t+e})/o,e=e.map(function(t){return t*r})),1-t.reduce(function(t,n,r){var o=e[r],i=Math.max(n,o),a=Math.min(n,o);return t+(i-a)/i},0)/o)}function r(){var t,e,n,r,i,a=Array.prototype.slice.call(arguments);if(a.some(function(t){return"number"==typeof t._tap}))throw new Error("Can't combine Rhythms before calling done()");if(r=a.reduce(function(t,e){return t+e._weight},0),t=a.shift(),n=t.length,a.some(function(t){return t.length!==n}))throw new Error("Can't combine Rhythms of different lengths");return e=t._weight,i=t._taps.map(function(t,n){return(t*e+a.reduce(function(t,e){return t+e._taps[n]*e._weight},0))/r}),new o({length:n,_taps:i,_weight:r})}function o(t){if(null==t)this.length=0,this._prevTap=0,this._curTap=0,this._taps=[],this._weight=1;else if(t.constructor===Array){if(!t.length)throw new Error("Rhythm array cannot be empty");if(t.some(function(t){return"number"!=typeof t||!t}))throw new Error("Rhythm array must only contain non-zero numbers");this.length=t.length+1,this._taps=t,this._weight=1}else{if(!t.hasOwnProperty("length")||!t.hasOwnProperty("_taps")||!t.hasOwnProperty("_weight"))throw new Error("Object passed to Rhythm is poorly formatted");this.length=t.length,this._taps=t._taps,this._weight=t._weight}}var i=t("right-now");o.prototype.tap=function(){var t,e=this._curTap;if("undefined"==typeof e)throw new Error("Can't call tap() after calling done()");return t=this._prevTap=e,e=this._curTap=i(),t&&this._taps.push(e-t||1),this.length++,this},o.prototype.done=function(){if(this.length<2)throw new Error("Can't call done() with less than 2 taps");return delete this._curTap,delete this._prevTap,delete this._nextTap,Object.freeze(this),this},o.prototype.playback=function(t,e){function n(){var e,u;t(r),o>r&&(u=i(),e=u-a-f[r],setTimeout(n,f[++r]-e),a=u)}var r,o,a,f;if("number"==typeof this._curTap)throw new Error("Can't call playback() before calling done()");return r=0,o=this.length,f=this._taps,e&&(f=f.map(function(t){return t*e})),a=i(),n(),this},e.exports={compare:n,average:r,Rhythm:o}},{"right-now":2}],2:[function(t,e){(function(t){e.exports=t.performance&&t.performance.now?function(){return performance.now()}:Date.now||function(){return+new Date}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1])(1)});
+!function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("function"==typeof define&&define.amd)define([],t);else{var e;"undefined"!=typeof window?e=window:"undefined"!=typeof global?e=global:"undefined"!=typeof self&&(e=self),e.tappy=t()}}(function(){return function t(e,n,r){function o(a,f){if(!n[a]){if(!e[a]){var u="function"==typeof require&&require;if(!f&&u)return u(a,!0);if(i)return i(a,!0);var h=new Error("Cannot find module '"+a+"'");throw h.code="MODULE_NOT_FOUND",h}var p=n[a]={exports:{}};e[a][0].call(p.exports,function(t){var n=e[a][1][t];return o(n?n:t)},p,p.exports,t,e,n,r)}return n[a].exports}for(var i="function"==typeof require&&require,a=0;a<r.length;a++)o(r[a]);return o}({1:[function(t,e){function n(t,e,n){var r,o,i,a,f,u;if("number"==typeof t._tap||"number"==typeof e._tap)throw new Error("Can't compare Rhythms before calling done()");return o=t.length,o!==e.length?!1:(o--,t=t._taps,e=e._taps,n?(f=t,u=e):(i=t.reduce(function(t,e){return t+e}),a=e.reduce(function(t,e){return t+e}),i>a?(f=t,u=e):(f=e,u=t),r=f.map(function(t,e){var n=u[e];return n/t}).reduce(function(t,e){return t+e})/o,f=f.map(function(t){return t*r})),1-f.reduce(function(t,e,n){var r=u[n],o=Math.max(e,r),i=Math.min(e,r);return t+(o-i)/o},0)/o)}function r(){var t,e,n,r,i,a=Array.prototype.slice.call(arguments);if(a.some(function(t){return"number"==typeof t._tap}))throw new Error("Can't combine Rhythms before calling done()");if(r=a.reduce(function(t,e){return t+e._weight},0),t=a.shift(),n=t.length,a.some(function(t){return t.length!==n}))throw new Error("Can't combine Rhythms of different lengths");return e=t._weight,i=t._taps.map(function(t,n){return(t*e+a.reduce(function(t,e){return t+e._taps[n]*e._weight},0))/r}),new o({length:n,_taps:i,_weight:r})}function o(t){if(null==t)this.length=0,this._prevTap=0,this._curTap=0,this._taps=[],this._weight=1;else if(t.constructor===Array){if(!t.length)throw new Error("Rhythm array cannot be empty");if(t.some(function(t){return"number"!=typeof t||!t}))throw new Error("Rhythm array must only contain non-zero numbers");this.length=t.length+1,this._taps=t,this._weight=1}else{if(!t.hasOwnProperty("length")||!t.hasOwnProperty("_taps")||!t.hasOwnProperty("_weight"))throw new Error("Object passed to Rhythm is poorly formatted");this.length=t.length,this._taps=t._taps,this._weight=t._weight}}var i=t("right-now");o.prototype.tap=function(){var t,e=this._curTap;if("undefined"==typeof e)throw new Error("Can't call tap() after calling done()");return t=this._prevTap=e,e=this._curTap=i(),t&&this._taps.push(e-t||1),this.length++,this},o.prototype.done=function(){if(this.length<2)throw new Error("Can't call done() with less than 2 taps");return delete this._curTap,delete this._prevTap,delete this._nextTap,Object.freeze(this),this},o.prototype.playback=function(t,e){function n(){var e,u;t(r),o>r&&(u=i(),e=u-a-f[r],setTimeout(n,f[++r]-e),a=u)}var r,o,a,f;if("number"==typeof this._curTap)throw new Error("Can't call playback() before calling done()");return r=0,o=this.length,f=this._taps,e&&(f=f.map(function(t){return t*e})),a=i(),n(),this},e.exports={compare:n,average:r,Rhythm:o}},{"right-now":2}],2:[function(t,e){(function(t){e.exports=t.performance&&t.performance.now?function(){return performance.now()}:Date.now||function(){return+new Date}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1])(1)});
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1]);

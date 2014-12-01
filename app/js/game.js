@@ -20,20 +20,18 @@ function shuffle (array) {
   return result;
 }
 
-function parseSong (song) {
-  var i, durations = [];
+function parseSong (song, note, tempo) {
+  var i, intervals = [];
 
-  if (song.charAt(0) !== '-' || song.charAt(song.length - 1) !== '-') {
-    throw song + ' is not a valid song! It needs to start and end with a dash.';
-  }
+  // default character
+  if (typeof note !== 'string' || note.length !== 1) note = 'x';
 
-  while (song.length) {
-    i = song.indexOf('-') + 1;
+  while ((i = song.indexOf(note) + 1)) {
     song = song.slice(i);
-    durations.push(i);
+    intervals.push(i * (tempo ? tempo : 1));
   }
 
-  return new tappy.Rhythm(durations.slice(1));
+  return new tappy.Rhythm(intervals.slice(1));
 }
 
 function startGame (first) {
@@ -78,7 +76,7 @@ function nextLevel () {
       var dots = DOM.dots;
       var currentLength = dots.children.length - 1;
 
-      // using innnerHTML in stead of textContent to preserve &nbsp;s
+      // using innnerHTML instead of textContent to preserve &nbsp;s
       DOM.songTitle.innerHTML = level.title;
 
       while (++currentLength < answerLength) dots.appendChild(document.createElement('li'));
@@ -99,19 +97,21 @@ function reset () {
   rhythm = new tappy.Rhythm();
 }
 
-function clickHandler (replay, skip) {
+function clickHandler (variant) {
   if (gameOver) {
-    if (replay) startGame();
+    if (variant === 'replay') startGame();
     return randColor();
-  } else if (!answerLength || skip) {
+  } else if (!answerLength || variant === 'skip') {
     return nextLevel();
+  } else if (variant === 'reset') {
+    reset();
   } else {
     var currentLength = rhythm.tap().length;
 
     DOM.dots.children[currentLength - 1].className = 'marked';
 
     if (currentLength === answerLength) {
-      if (tappy.compare(rhythm.done(), answer, true) > 0.80) {
+      if (tappy.compare(rhythm.done(), answer) > 0.80) {
         return nextLevel();
       } else {
         sounds.bitty.play();

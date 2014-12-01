@@ -1,22 +1,24 @@
 var isMobile = require('ismobilejs').any;
 var DOM = require('./DOM');
 var ripple = require('./ripple');
-var timer = require('./game');
+var game = require('./game');
 
+var keysPressed = {};
 var spacePressed = false;
+var resetPressed = false;
 var resizer = null;
 
-function handleAction (x, y, replay, skip) {
-  var color = timer(replay, skip);
+function handleAction (x, y, variant) {
+  var color = game(variant);
   if (!isMobile || color) ripple(x, y, color);
 }
 
 function handleSkip () {
-  handleAction(DOM.width / 2, DOM.height / 2, false, true);
+  handleAction(DOM.width / 2, DOM.height / 2, 'skip');
 }
 
 function handleReplay () {
-  handleAction(DOM.width / 2, DOM.height / 2, true);
+  handleAction(DOM.width / 2, DOM.height / 2, 'replay');
 }
 
 function handleMousedown (e) {
@@ -26,16 +28,27 @@ function handleMousedown (e) {
 }
 
 function handleKeydown (e) {
+  var keyCode;
   e = e || window.event;
-  if (!spacePressed && e.keyCode === 32) {
-    handleAction(DOM.width / 2, DOM.height / 2);
-    spacePressed = true;
+  keyCode = e.keyCode;
+
+  if (!keysPressed[keyCode]) {
+    keysPressed[keyCode] = true;
+    if (keyCode === 32) handleAction(DOM.width / 2, DOM.height / 2);
+    else if (keyCode === 8 || keyCode === 27 || keyCode === 46)
+      handleAction(DOM.width / 2, DOM.height / 2, 'reset');
   }
+
+  e.preventDefault();
+  return false;
 }
 
 function handleKeyup (e) {
+  var keyCode;
   e = e || window.event;
-  if (e.keyCode === 32) spacePressed = false;
+  keyCode = e.keyCode;
+
+  if (keysPressed[keyCode]) keysPressed[keyCode] = false;
 }
 
 function handleResize () {
