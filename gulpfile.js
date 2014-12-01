@@ -32,7 +32,7 @@ gulp.task('scripts', ['lint'], function() {
 
 gulp.task('sass', function () {
   return gulp.src(paths.stylesheets)
-    .pipe($.rubySass())
+    .pipe($.rubySass({ "sourcemap=none": true }))
     .pipe($.autoprefixer())
     .pipe(gulp.dest(paths.dist))
 });
@@ -44,14 +44,15 @@ gulp.task('watch', function() {
 
 gulp.task('deploy', function () {
   gulp.src(paths.dist + '/**/*')
-    .pipe($.ghPages('https://github.com/rileyjshaw/tappy.git', 'origin'));
+    .pipe($.ghPages('https://github.com/rileyjshaw/tappy-game.git', 'origin'));
 });
 
 gulp.task('webserver', function() {
   gulp.src(paths.dist)
     .pipe($.webserver({
       host: '0.0.0.0',
-      livereload: true,
+      port: '8001',
+      livereload: { port: 3001 },
       open: true
     }));
 });

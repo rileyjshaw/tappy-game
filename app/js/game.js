@@ -1,9 +1,12 @@
+var tappy = require('tappy');
 var DOM = require('./DOM');
 var levels = require('./levels');
 var randColor = require('./randColor');
 var sounds = require('./sounds');
 
-var last, next, checkTimer, clicks, answer, answerLength, gameOver, levelList, fails, newGame;
+// number of failures until Skip? appears
+var skipThreshold = 1;
+var rhythm, answer, answerLength, gameOver, levelList, fails, newGame;
 
 // Fisher-Yates shuffle, adapted from lodash
 function shuffle (array) {
@@ -18,7 +21,7 @@ function shuffle (array) {
 }
 
 function parseSong (song) {
-  var i, answer = [];
+  var i, durations = [];
 
   if (song.charAt(0) !== '-' || song.charAt(song.length - 1) !== '-') {
     throw song + ' is not a valid song! It needs to start and end with a dash.';
@@ -27,10 +30,10 @@ function parseSong (song) {
   while (song.length) {
     i = song.indexOf('-') + 1;
     song = song.slice(i);
-    answer.push(i);
+    durations.push(i);
   }
 
-  return answer.slice(1);
+  return new tappy.Rhythm(durations.slice(1));
 }
 
 function startGame (first) {
@@ -55,8 +58,6 @@ function endGame () {
   }, 300);
 }
 
-// bitty ditty / confused / fancy toast /
-
 function nextLevel () {
   var level = levelList.pop();
 
@@ -80,8 +81,8 @@ function nextLevel () {
       // using innnerHTML in stead of textContent to preserve &nbsp;s
       DOM.songTitle.innerHTML = level.title;
 
-      while (currentLength++ < answerLength) dots.appendChild(document.createElement('li'));
-      while (--currentLength > answerLength) dots.removeChild(dots.lastChild);
+      while (++currentLength < answerLength) dots.appendChild(document.createElement('li'));
+      while (currentLength-- > answerLength) dots.removeChild(dots.lastChild);
 
       DOM.overlay.className = '';
     }, 300);
@@ -92,35 +93,10 @@ function nextLevel () {
   return randColor();
 }
 
-function check () {
-  // calculate the beat
-  var beat = clicks.map(function (click, i) {
-    return click / answer[i];
-  }).reduce(function (acc, ratio) {
-    return acc + ratio;
-  }) / answerLength;
-
-  // calculate the standard deviation
-  var error = clicks.reduce(function (acc, click, i) {
-    // observed and expected values
-    var obs = click / beat, exp = answer[i];
-
-    return acc + Math.abs(obs - exp) / exp;
-  }, 0) / answerLength;
-
-  if (error < 0.16) return nextLevel();
-  else {
-    sounds.bitty.play();
-    if (++fails) DOM.skip.className = '';
-    reset();
-  }
-}
-
 function reset () {
   var marked = DOM.dots.children;
   for (var i = 0, _len = marked.length; i < _len; i++) marked[i].className = '';
-  next = null;
-  clicks = [];
+  rhythm = new tappy.Rhythm();
 }
 
 function clickHandler (replay, skip) {
@@ -130,16 +106,21 @@ function clickHandler (replay, skip) {
   } else if (!answerLength || skip) {
     return nextLevel();
   } else {
-    var currentLength = 0;
-    last = next;
-    next = new Date().getTime();
+    var currentLength = rhythm.tap().length;
 
-    if (last) currentLength = clicks.push(next - last);
+    DOM.dots.children[currentLength - 1].className = 'marked';
 
-    DOM.dots.children[currentLength].className = 'marked';
-
-    if (currentLength === answerLength) return check();
-    else sounds.snap.play();
+    if (currentLength === answerLength) {
+      if (tappy.compare(rhythm.done(), answer, true) > 0.80) {
+        return nextLevel();
+      } else {
+        sounds.bitty.play();
+        if (++fails === skipThreshold) {
+          DOM.skip.className = '';
+        }
+        reset();
+      }
+    } else sounds.snap.play();
   }
 }
 
