@@ -53,8 +53,7 @@ canvas {
   height: 24px;
   width: 24px;
   margin: 0 8px;
-  -moz-box-sizing: border-box;
-       box-sizing: border-box;
+  box-sizing: border-box;
   border: 1px white solid;
   border-radius: 12px;
   -webkit-transition: background 0.2s ease-in-out;
