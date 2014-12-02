@@ -35,12 +35,9 @@ function handleKeydown (e) {
   if (!keysPressed[keyCode]) {
     keysPressed[keyCode] = true;
     if (keyCode === 32) handleAction(DOM.width / 2, DOM.height / 2);
-    else if (keyCode === 8 || keyCode === 27 || keyCode === 46)
+    else if (keyCode === 27 || keyCode === 46)
       handleAction(DOM.width / 2, DOM.height / 2, 'reset');
   }
-
-  e.preventDefault();
-  return false;
 }
 
 function handleKeyup (e) {
