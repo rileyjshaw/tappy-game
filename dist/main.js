@@ -38,6 +38,11 @@ function handleKeydown (e) {
     if (keyCode === 32) handleAction(DOM.width / 2, DOM.height / 2);
     else if (keyCode === 27 || keyCode === 46)
       handleAction(DOM.width / 2, DOM.height / 2, 'reset');
+    else if (keyCode === 8) {
+      // block backspace from leaving page
+      handleAction(DOM.width / 2, DOM.height / 2, 'reset');
+      e.preventDefault();
+    }
   }
 }
 
