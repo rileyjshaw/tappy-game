@@ -66,7 +66,7 @@ document.addEventListener('keydown', handleKeydown, false);
 document.addEventListener('keyup', handleKeyup, false);
 window.addEventListener('resize', handleResize, false);
 
-ripple(DOM.width / 2, DOM.height / 2, '#03a9f4');
+ripple(DOM.width / 2, DOM.height / 2, '#ff5177');
 
 },{"./DOM":2,"./game":3,"./ripple":7,"ismobilejs":10}],2:[function(require,module,exports){
 function updateDimensions () {
@@ -369,10 +369,10 @@ module.exports = function (width, height, insertAfter) {
 },{}],6:[function(require,module,exports){
 // from Material Design, http://www.google.com/design/spec/style/color.html
 var colors = [
-  '#03a9f4',
-  '#9c27b0',
-  '#ff9800',
-  '#ff5177'
+  '#ff5177', // pink
+  '#03a9f4', // blue
+  '#9c27b0', // purple
+  '#ff9800'  // orange
 ];
 var currentIndex = 0, length = colors.length;
 

@@ -65,4 +65,4 @@ document.addEventListener('keydown', handleKeydown, false);
 document.addEventListener('keyup', handleKeyup, false);
 window.addEventListener('resize', handleResize, false);
 
-ripple(DOM.width / 2, DOM.height / 2, '#03a9f4');
+ripple(DOM.width / 2, DOM.height / 2, '#ff5177');

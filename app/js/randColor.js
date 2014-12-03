@@ -1,9 +1,9 @@
 // from Material Design, http://www.google.com/design/spec/style/color.html
 var colors = [
-  '#03a9f4',
-  '#9c27b0',
-  '#ff9800',
-  '#ff5177'
+  '#ff5177', // pink
+  '#03a9f4', // blue
+  '#9c27b0', // purple
+  '#ff9800'  // orange
 ];
 var currentIndex = 0, length = colors.length;
 
