@@ -1,6 +1,6 @@
 {
   "name": "tappy-game",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Tap the rhythm of the lyrics displayed",
   "repository": "https://github.com/rileyjshaw/tappy-game",
   "main": "dist/index.html",
@@ -39,6 +39,6 @@
   },
   "dependencies": {
     "ismobilejs": "^0.3.5",
-    "tappy": "^0.2.0"
+    "tappy": "^0.3.1"
   }
 }
