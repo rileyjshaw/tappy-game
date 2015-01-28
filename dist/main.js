@@ -374,14 +374,13 @@ var colors = [
   '#9c27b0', // purple
   '#ff9800'  // orange
 ];
-var currentIndex = 0, length = colors.length;
+var length = colors.length;
+var cycle = length - 1;
+var index = 0;
 
-module.exports = function () {
-  var index;
-  do index = Math.floor(Math.random() * length);
-  while (index === currentIndex);
-  currentIndex = index;
-
+// loop around the array between 0 and 360 degrees, exclusive
+module.exports = function randColor () {
+  index = (index + 1 + Math.floor(Math.random() * cycle)) % length;
   return colors[index];
 };
 
